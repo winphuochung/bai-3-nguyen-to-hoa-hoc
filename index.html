@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Khoa học Tự nhiên 7 - Bài 3: Nguyên tố hóa học</title>
+  
+  <!-- Cấu hình Web App & Mobile Icon (PWA) -->
+  <meta name="theme-color" content="#0284c7">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hóa Học 7">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- CỔNG ĐĂNG NHẬP RIÊNG (LOGIN PORTAL) - BẮT BUỘC ĐĂNG NHẬP TRƯỚC KHI VÀO -->
+  <div id="loginPortalScreen">
+    <div class="login-card-container">
+      <img src="assets/logo.png" alt="Logo" class="login-brand-logo" onerror="this.src='https://placehold.co/120x60/0284c7/ffffff?text=CHEM+7'">
+      <div class="login-header">
+        <h2>CỔNG ĐĂNG NHẬP HỌC TẬP</h2>
+        <p>Khoa học Tự nhiên 7 • Bài 3: Nguyên tố hóa học</p>
+      </div>
+
+      <!-- Tab chuyển đổi Học sinh / Giáo viên -->
+      <div class="role-switcher-tabs">
+        <button class="role-tab-btn active" id="tabSelectStudent" onclick="selectLoginRole('student')">
+          👤 Học sinh
+        </button>
+        <button class="role-tab-btn" id="tabSelectTeacher" onclick="selectLoginRole('teacher')">
+          🔐 Giáo viên (Admin)
+        </button>
+      </div>
+
+      <!-- Form đăng nhập Học sinh -->
+      <form id="studentLoginForm" onsubmit="handleStudentSubmit(event)">
+        <div class="login-form-group">
+          <label for="studentNameInput">Họ & Tên học sinh hoặc Lớp:</label>
+          <div class="login-input-wrapper">
+            <input type="text" id="studentNameInput" class="login-input" placeholder="Ví dụ: Nguyễn Văn An - Lớp 7A" required autocomplete="name">
+          </div>
+        </div>
+        <button type="submit" class="btn-login-submit">Vào Học Ngay 🚀</button>
+      </form>
+
+      <!-- Form đăng nhập Giáo viên (Admin) -->
+      <form id="teacherLoginForm" onsubmit="handleTeacherSubmit(event)" style="display: none;">
+        <div class="login-form-group">
+          <label for="teacherUsername">Tên tài khoản Giáo viên:</label>
+          <div class="login-input-wrapper">
+            <input type="text" id="teacherUsername" class="login-input" value="giaovien" placeholder="Nhập tài khoản giáo viên" required autocomplete="username">
+          </div>
+        </div>
+        <div class="login-form-group">
+          <label for="teacherPasswordInput">Mật khẩu:</label>
+          <div class="login-input-wrapper">
+            <input type="password" id="teacherPasswordInput" class="login-input" placeholder="Nhập mật khẩu" required autocomplete="current-password">
+            <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility('teacherPasswordInput')" title="Ẩn/Hiện mật khẩu">👁️</button>
+          </div>
+        </div>
+        <div id="teacherLoginError" class="login-error-msg">Mật khẩu không chính xác! Vui lòng thử lại.</div>
+        <button type="submit" class="btn-login-submit" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">Đăng Nhập Quản Trị (Admin) 🔐</button>
+      </form>
+
+      <div style="margin-top: 1.2rem; font-size: 0.8rem; color: #94a3b8;">
+        Hệ thống LMS thông minh • Đồng bộ Google Sheets Real-time
+      </div>
+    </div>
+  </div>
+
+  <!-- NỘI DUNG ỨNG DỤNG BÊN TRONG (CHỈ HIỂN THỊ KHI ĐÃ ĐĂNG NHẬP THÀNH CÔNG) -->
+  <div id="mainAppWrapper" class="app-wrapper" style="display: none;">
+
+    <!-- THANH ĐIỀU HƯỚNG NAVBAR -->
+    <header class="navbar">
+      <div class="brand" onclick="switchTab('home')">
+        <img src="assets/logo.png" alt="Logo Khoa học Tự nhiên" onerror="this.src='https://placehold.co/100x44/0284c7/ffffff?text=CHEM+7'">
+        <div class="brand-text">
+          <h1>KHTN 7 - BÀI 3</h1>
+          <span>Nguyên tố hóa học • Bộ Kết nối tri thức</span>
+        </div>
+      </div>
+
+      <!-- Nút mở menu trên điện thoại -->
+      <button class="mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileNav()" aria-label="Mở menu">
+        ☰
+      </button>
+
+      <ul class="nav-links" id="mainNavLinks">
+        <li><button class="nav-btn active" data-tab="home" onclick="handleNavClick('home')">🏠 Tổng quan</button></li>
+        <li><button class="nav-btn" data-tab="elements" onclick="handleNavClick('elements')">🧪 Bảng 3.1</button></li>
+        <li><button class="nav-btn" data-tab="body" onclick="handleNavClick('body')">🧬 Cơ thể người</button></li>
+        <li><button class="nav-btn" data-tab="media" onclick="handleNavClick('media')">🎬 Bài giảng & PhET</button></li>
+        <li><button class="nav-btn" data-tab="practice" onclick="handleNavClick('practice')">📝 Luyện tập</button></li>
+        <li><button class="nav-btn" data-tab="game" onclick="handleNavClick('game')">🏆 Triệu phú</button></li>
+        <!-- Tab Giáo viên chỉ hiện khi đăng nhập quyền Admin Giáo viên -->
+        <li id="navTabTeacherItem" style="display: none;">
+          <button class="nav-btn" data-tab="teacher" onclick="handleNavClick('teacher')">📊 Quản trị (Admin)</button>
+        </li>
+      </ul>
+
+      <div class="user-badge" id="userBadgeHeader">
+        <div class="user-tag" id="userDisplayBadge">
+          👤 <strong>Học sinh</strong>
+        </div>
+        <button class="btn-teacher-switch" onclick="logoutApp()" title="Đăng xuất khỏi phiên học">🚪 Đăng xuất</button>
+      </div>
+    </header>
+
+    <!-- CONTAINER NỘI DUNG CHÍNH -->
+    <main class="container">
+
+    <!-- PHẦN 1: TRANG CHỦ & TỔNG QUAN -->
+    <section id="section-home" class="view-section active">
+      <div class="hero-card">
+        <div class="hero-content">
+          <span class="hero-tag">Chương trình Giáo dục Phổ thông 2018</span>
+          <h2 class="hero-title">Khám Phá Thế Giới Các Nguyên Tố Hóa Học</h2>
+          <p class="hero-desc">
+            Vạn vật xung quanh chúng ta, từ những hạt cát, giọt nước đến từng tế bào trong cơ thể người, đều được cấu tạo từ các nguyên tố hóa học. Cùng tìm hiểu bản chất của nguyên tử, quy ước kí hiệu quốc tế và thử thách bản thân với game show hấp dẫn!
+          </p>
+          <div class="hero-btns">
+            <button class="btn-primary" onclick="switchTab('elements')">Khám phá 20 Nguyên tố</button>
+            <button class="btn-outline-white" onclick="switchTab('game')">Chơi Ai là triệu phú</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-cards">
+        <div class="feature-box" onclick="switchTab('elements')" style="cursor: pointer;">
+          <div class="feature-icon">⚛️</div>
+          <h3>Định nghĩa Nguyên tố</h3>
+          <p>Tập hợp những nguyên tử cùng loại có cùng <strong>số proton</strong> trong hạt nhân. Số proton là dấu hiệu đặc trưng quan trọng nhất.</p>
+        </div>
+
+        <div class="feature-box" onclick="switchTab('elements')" style="cursor: pointer;">
+          <div class="feature-icon">🔤</div>
+          <h3>Quy tắc Kí hiệu Quốc tế</h3>
+          <p>Kí hiệu gồm 1 chữ cái in hoa (ví dụ: <strong>H, C, O</strong>) hoặc 2 chữ cái với chữ thứ 2 bắt buộc viết thường (ví dụ: <strong>Na, Ca, Cl</strong>).</p>
+        </div>
+
+        <div class="feature-box" onclick="switchTab('body')" style="cursor: pointer;">
+          <div class="feature-icon">🧍</div>
+          <h3>Nguyên tố trong Cơ thể người</h3>
+          <p>Oxygen chiếm tới <strong>65%</strong> khối lượng cơ thể người. Bốn nguyên tố C, H, O, N chiếm tới 96% khối lượng của sự sống!</p>
+        </div>
+
+        <div class="feature-box" onclick="switchTab('practice')" style="cursor: pointer;">
+          <div class="feature-icon">📈</div>
+          <h3>Đánh giá Trực tuyến</h3>
+          <p>Luyện tập trắc nghiệm 10 câu và tự luận chuyên sâu. Tự động chấm điểm và đồng bộ trực tiếp về Google Sheets cho thầy cô.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHẦN 2: BẢNG 3.1 - 20 NGUYÊN TỐ ĐẦU TIÊN -->
+    <section id="section-elements" class="view-section">
+      <div style="margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.6rem; color: #0f172a; margin-bottom: 6px;">Bảng 3.1: 20 Nguyên tố Hóa học Đầu tiên</h2>
+        <p style="color: #64748b;">Tra cứu Số hiệu nguyên tử (Z), Tên quốc tế IUPAC, Kí hiệu hóa học và Khối lượng nguyên tử (amu).</p>
+      </div>
+
+      <div class="table-filter-bar">
+        <input type="text" id="elemSearch" class="search-input" placeholder="🔍 Tìm theo Tên, Kí hiệu hoặc Số Z...">
+        <div class="filter-chips">
+          <button class="chip-btn active" onclick="filterByType('all')">Tất cả (20)</button>
+          <button class="chip-btn" onclick="filterByType('Kim loại')">Kim loại</button>
+          <button class="chip-btn" onclick="filterByType('Phi kim')">Phi kim</button>
+          <button class="chip-btn" onclick="filterByType('Á kim')">Á kim</button>
+          <button class="chip-btn" onclick="filterByType('Khí hiếm')">Khí hiếm</button>
+        </div>
+      </div>
+
+      <div class="elements-grid" id="elementsGridContainer">
+        <!-- Render bằng data.js -->
+      </div>
+    </section>
+
+    <!-- PHẦN 3: HÌNH 3.2 - NGUYÊN TỐ TRONG CƠ THỂ NGƯỜI -->
+    <section id="section-body" class="view-section">
+      <div style="margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.6rem; color: #0f172a; margin-bottom: 6px;">Hình 3.2: Thành phần các nguyên tố trong cơ thể người</h2>
+        <p style="color: #64748b;">Phần trăm khối lượng các nguyên tố cấu thành cơ thể con người theo nghiên cứu sinh học.</p>
+      </div>
+
+      <div class="body-comp-layout">
+        <div>
+          <h3 style="margin-bottom: 1rem; color: #0f172a;">Biểu đồ Tỉ lệ Khối lượng (%)</h3>
+          <div class="comp-list" id="bodyCompList">
+            <!-- Render từ data.js -->
+          </div>
+        </div>
+
+        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 10px; border: 1px solid var(--border);">
+          <h3 style="color: #0369a1; margin-bottom: 12px;">💡 Kiến thức Trọng tâm & Tư duy Hóa học</h3>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; font-size: 0.95rem; line-height: 1.6;">
+            <li>
+              <strong>1. Vì sao Oxygen (O) chiếm tới 65%?</strong><br>
+              Nước (H₂O) chiếm hơn 60% trọng lượng cơ thể người. Một nguyên tử Oxygen có khối lượng 16 amu, nặng gấp 16 lần nguyên tử Hydrogen (1 amu), do đó Oxygen chiếm ưu thế vượt trội về mặt khối lượng.
+            </li>
+            <li>
+              <strong>2. Bốn nguyên tố sự sống (C, H, O, N):</strong><br>
+              Chiếm khoảng 96% tổng khối lượng cơ thể người, tạo nên protein, lipid, carbohydrate và ADN.
+            </li>
+            <li>
+              <strong>3. Vai trò của Calcium (Ca) & Phosphorus (P):</strong><br>
+              Chiếm khoảng 2.5% khối lượng, là thành phần cốt lõi của men răng và khung xương vững chắc.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHẦN 4: VIDEO BÀI GIẢNG & MÔ PHỎNG THÍ NGHIỆM PHET -->
+    <section id="section-media" class="view-section">
+      <div style="margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.6rem; color: #0f172a; margin-bottom: 6px;">Học liệu Đa phương tiện & Thí nghiệm Ảo</h2>
+        <p style="color: #64748b;">Xem bài giảng tóm tắt và trải nghiệm mô phỏng xây dựng nguyên tử tương tác.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <!-- Thí nghiệm PhET -->
+        <div style="background: white; border-radius: var(--radius); padding: 1.5rem; border: 1px solid var(--border); box-shadow: var(--shadow);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <h3 style="color: #0f172a;">🔬 Thí nghiệm PhET: Build an Atom</h3>
+            <span style="background: #ecfdf5; color: #047857; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; font-weight: bold;">Tương tác trực tiếp</span>
+          </div>
+          <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 12px;">
+            Học sinh tự tay kéo thả các hạt <strong>Proton</strong>, <strong>Neutron</strong>, <strong>Electron</strong> vào mô hình để quan sát sự thay đổi tên nguyên tố hóa học và điện tích hạt nhân.
+          </p>
+          <div style="position: relative; padding-bottom: 65%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #cbd5e1; background: #000;">
+            <iframe 
+              src="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html" 
+              style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border:0;" 
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+            <a href="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_en.html" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: #0284c7; text-decoration: none; font-weight: 600;">
+              ↗ Mở thí nghiệm toàn màn hình (Cửa sổ mới)
+            </a>
+          </div>
+        </div>
+
+        <!-- Video Bài giảng & Khoa học -->
+        <div style="background: white; border-radius: var(--radius); padding: 1.5rem; border: 1px solid var(--border); box-shadow: var(--shadow);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <h3 style="color: #0f172a;">🎥 Video Khoa học: Nguyên tử & Nguyên tố</h3>
+            <span style="background: #eff6ff; color: #1d4ed8; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; font-weight: bold;">TED-Ed Phụ đề</span>
+          </div>
+          <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 12px;">
+            Khám phá trực quan cấu trúc siêu vi của nguyên tử, hạt nhân proton và bản chất các nguyên tố cấu thành vật chất.
+          </p>
+          <div style="position: relative; padding-bottom: 65%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid #cbd5e1; background: #000;">
+            <iframe 
+              id="mainVideoPlayer"
+              src="https://www.youtube.com/embed/yQP4UJhNn0I?rel=0" 
+              title="Khám phá Nguyên tử và Nguyên tố" 
+              style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border:0;" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen>
+            </iframe>
+          </div>
+          
+          <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; gap: 6px;">
+              <button onclick="changeVideo('yQP4UJhNn0I')" style="font-size: 0.8rem; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; cursor: pointer;">Video 1: TED-Ed Nguyên tử</button>
+              <button onclick="changeVideo('FSyAehMdpyI')" style="font-size: 0.8rem; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; cursor: pointer;">Video 2: CrashCourse Hạt nhân</button>
+            </div>
+            <a href="https://www.youtube.com/results?search_query=b%C3%A0i+3+nguy%C3%AAn+t%E1%BB%91+h%C3%B3a+h%E1%BB%8Dc+k%E1%BA%BFt+n%E1%BB%91i+tri+th%E1%BB%A9c" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: #0284c7; text-decoration: none; font-weight: 600;">
+              🔍 Xem bài giảng KHTN 7 trên YouTube ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHẦN 5: LUYỆN TẬP TRẮC NGHIỆM & TỰ LUẬN -->
+    <section id="section-practice" class="view-section">
+      <div style="margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.6rem; color: #0f172a; margin-bottom: 6px;">Đánh giá Năng lực: Trắc nghiệm & Tự luận</h2>
+        <p style="color: #64748b;">Hệ thống tự động chấm điểm và gửi dữ liệu học tập về cơ sở dữ liệu LMS.</p>
+      </div>
+
+      <div class="quiz-container">
+        <!-- TRẮC NGHIỆM -->
+        <div class="quiz-header">
+          <span style="font-weight: 700; color: #0369a1;" id="quizProgress">Câu 1 / 10</span>
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Trắc nghiệm 10 câu khách quan</span>
+        </div>
+
+        <div class="quiz-q-title" id="quizQuestionTitle">Đang tải câu hỏi...</div>
+
+        <div class="options-list" id="quizOptionsList">
+          <!-- Render danh sách đáp án -->
+        </div>
+
+        <div class="explanation-box" id="quizExplanation" style="display: none;"></div>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+          <button class="btn-outline-white" id="btnQuizPrev" onclick="prevQuizQuestion()" style="border-color: #cbd5e1; color: #475569;">⬅ Câu trước</button>
+          <div>
+            <button class="btn-primary" id="btnQuizNext" onclick="nextQuizQuestion()">Câu tiếp theo ➡</button>
+            <button class="btn-primary" id="btnQuizSubmit" onclick="submitQuiz()" style="display: none; background: #10b981;">Nộp bài trắc nghiệm ✔</button>
+          </div>
+        </div>
+
+        <hr style="margin: 2.5rem 0; border: none; border-top: 1px dashed var(--border);">
+
+        <!-- TỰ LUẬN -->
+        <h3 style="font-size: 1.3rem; margin-bottom: 1rem; color: #0f172a;">Phần Tự luận (3 Câu hỏi sâu)</h3>
+        
+        <div style="margin-bottom: 1.5rem;">
+          <label style="font-weight: 600; font-size: 0.95rem; display: block; margin-bottom: 6px;">Câu 1: Vì sao số proton là dấu hiệu đặc trưng quan trọng nhất để phân biệt các nguyên tố hóa học?</label>
+          <textarea id="essayAns1" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;" placeholder="Nhập câu trả lời của bạn..."></textarea>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label style="font-weight: 600; font-size: 0.95rem; display: block; margin-bottom: 6px;">Câu 2: Nêu quy ước viết kí hiệu hóa học (1 chữ cái và 2 chữ cái). Cho 2 ví dụ viết đúng và 2 ví dụ viết sai.</label>
+          <textarea id="essayAns2" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;" placeholder="Nhập câu trả lời của bạn..."></textarea>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label style="font-weight: 600; font-size: 0.95rem; display: block; margin-bottom: 6px;">Câu 3: Dựa vào Hình 3.2, giải thích vì sao Oxygen chiếm 65% khối lượng cơ thể dù số nguyên tử Hydrogen trong nước nhiều gấp đôi?</label>
+          <textarea id="essayAns3" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95rem;" placeholder="Nhập câu trả lời của bạn..."></textarea>
+        </div>
+
+        <button class="btn-primary" onclick="submitEssay()" style="width: 100%; padding: 12px;">Gửi bài làm Tự luận lên Hệ thống Giáo viên 🚀</button>
+      </div>
+    </section>
+
+    <!-- PHẦN 6: TRÒ CHƠI "AI LÀ TRIỆU PHÚ HÓA HỌC" -->
+    <section id="section-game" class="view-section">
+      <div id="gameStartBanner" style="text-align: center; background: white; padding: 3rem 2rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border);">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🏆</div>
+        <h2 style="font-size: 2rem; color: #0f172a; margin-bottom: 10px;">Ai Là Triệu Phú Hóa Học 7</h2>
+        <p style="color: #64748b; max-width: 600px; margin: 0 auto 1.5rem;">
+          Trải qua 15 câu hỏi kịch tính về Bảng 3.1 và thành phần cơ thể người với 2 quyền trợ giúp: <strong>50/50</strong> và <strong>Hỏi ý kiến khán giả</strong>!
+        </p>
+        <button class="btn-primary" onclick="startMillionaireGame()" style="font-size: 1.1rem; padding: 12px 30px;">Bắt đầu Ngồi ghế nóng 🎙️</button>
+      </div>
+
+      <div class="game-screen" id="gamePlayContainer" style="display: none;">
+        <div class="game-main">
+          <div style="display: flex; gap: 10px; margin-bottom: 1.5rem;">
+            <button class="btn-outline-white" id="btn5050" onclick="use5050()" style="font-size: 0.85rem;">Trợ giúp: 50/50 ✂</button>
+            <button class="btn-outline-white" id="btnAudience" onclick="useAudienceHelp()" style="font-size: 0.85rem;">Trợ giúp: Khán giả 👥</button>
+          </div>
+
+          <div class="game-q-box" id="gameQText">
+            Đang tải câu hỏi...
+          </div>
+
+          <div class="game-options-grid" id="gameOptionsGrid">
+            <!-- 4 lựa chọn -->
+          </div>
+        </div>
+
+        <div class="game-ladder" id="gameLadderList">
+          <!-- 15 mốc thưởng -->
+        </div>
+      </div>
+    </section>
+
+    <!-- PHẦN 7: BẢNG ĐIỀU KHIỂN GIÁO VIÊN -->
+    <section id="section-teacher" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2 style="font-size: 1.6rem; color: #0f172a; margin-bottom: 6px;">Bảng Điều Khiển Giáo Viên (LMS Dashboard)</h2>
+          <p style="color: #64748b;">Theo dõi kết quả làm bài tập, trò chơi và quản lý tích hợp Google Sheets theo thời gian thực.</p>
+        </div>
+        <div>
+          <button class="btn-teacher-switch" onclick="clearAllRecords()" style="color: #ef4444; border-color: #fca5a5;">Xóa lịch sử bài nộp</button>
+          <button class="btn-teacher-switch" onclick="logoutTeacher()" style="margin-left: 8px;">Đăng xuất</button>
+        </div>
+      </div>
+
+      <!-- Khối cấu hình Google Apps Script -->
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1.2rem; border-radius: var(--radius); margin-bottom: 2rem;">
+        <h4 style="color: #166534; margin-bottom: 8px;">🔗 Cấu hình Real-time Google Apps Script Webhook</h4>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <input type="text" id="gasUrlInput" value="https://script.google.com/macros/s/AKfycby5fJGZQCsL1U1kOxl3oPEuRHdHejM28d-TKiBorjIzZV5YyGisZzDQ9zQRMJjCOka2/exec" placeholder="Dán URL Web App của Google Apps Script" style="flex: 1; min-width: 300px; padding: 10px; border-radius: 8px; border: 1px solid #86efac; font-size: 0.9rem;">
+          <button class="btn-primary" onclick="saveGasUrl()" style="background: #16a34a; color: white;">Lưu kết nối</button>
+        </div>
+        <small style="color: #15803d; display: block; margin-top: 6px;">
+          * Sau khi dán URL Web App, mọi bài làm của học sinh sẽ tự động được gửi và ghi dòng mới vào Google Sheet của thầy/cô!
+        </small>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="teacher-table">
+          <thead>
+            <tr>
+              <th>STT</th>
+              <th>Thời gian nộp</th>
+              <th>Tên Học sinh</th>
+              <th>Loại hoạt động</th>
+              <th>Điểm / Mức đạt</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="teacherTableBody">
+            <!-- Render kết quả học sinh -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Dự án Ứng dụng Học tập Thông minh - <strong>Khoa học Tự nhiên 7 (Bài 3: Nguyên tố hóa học)</strong></p>
+    <p style="margin-top: 4px; font-size: 0.8rem; color: #94a3b8;">Thiết kế & Tích hợp bởi Antigravity EdTech Specialist • Bộ sách Kết nối tri thức với cuộc sống</p>
+  </footer>
+
+  </div> <!-- KẾT THÚC mainAppWrapper -->
+
+  <!-- MODAL CHẤM ĐIỂM TỰ LUẬN CỦA GIÁO VIÊN -->
+  <div class="modal-overlay" id="gradingModal">
+    <div class="modal-box" style="max-width: 680px; max-height: 90vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="color: #0369a1; font-size: 1.3rem;">📝 Chấm Điểm Bài Tự Luận</h3>
+        <button onclick="closeGradingModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #94a3b8;">&times;</button>
+      </div>
+
+      <div id="gradingStudentInfo" style="background: #f1f5f9; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.95rem;">
+        <!-- Thông tin học sinh -->
+      </div>
+
+      <div id="gradingEssayContent">
+        <!-- Nội dung 3 câu tự luận của học sinh kèm đáp án mẫu -->
+      </div>
+
+      <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 16px; margin-top: 20px;">
+        <h4 style="color: #0f172a; margin-bottom: 12px;">Đánh giá & Cho điểm của Thầy Thắng:</h4>
+        
+        <div style="display: grid; grid-template-columns: 140px 1fr; gap: 12px; align-items: center; margin-bottom: 12px;">
+          <label style="font-weight: 700; color: #334155;">Điểm số (thang 10):</label>
+          <input type="number" id="gradingScoreInput" min="0" max="10" step="0.5" placeholder="Ví dụ: 9.5" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-weight: bold; font-size: 1.1rem; width: 140px;">
+        </div>
+
+        <div>
+          <label style="font-weight: 600; color: #334155; display: block; margin-bottom: 6px;">Lời nhận xét / Lời phê cho học sinh:</label>
+          <textarea id="gradingCommentInput" rows="3" placeholder="Nhập lời nhận xét, góp ý chi tiết cho học sinh..." style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem;"></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+        <button class="btn-outline-white" onclick="closeGradingModal()" style="border-color: #cbd5e1; color: #475569;">Đóng</button>
+        <button class="btn-primary" id="btnSaveGrading" onclick="saveAndSyncGrading()" style="background: #16a34a;">Lưu & Đồng bộ lên Google Sheet 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CHI TIẾT NGUYÊN TỐ -->
+  <div class="modal-overlay" id="elementDetailModal">
+    <div class="modal-box" style="max-width: 540px;">
+      <div id="elementDetailBody"></div>
+      <div style="text-align: right; margin-top: 1.5rem;">
+        <button class="btn-primary" onclick="closeElementModal()">Đóng cửa sổ</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Đăng ký Service Worker hỗ trợ cài đặt App trên Điện thoại & Laptop (PWA)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then((reg) => {
+          console.log('PWA ServiceWorker đã sẵn sàng:', reg.scope);
+        }).catch((err) => {
+          console.log('ServiceWorker đăng ký không thành công:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>

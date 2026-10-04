@@ -1,0 +1,13 @@
+{
+  "name": "bai-3-nguyen-to-hoa-hoc",
+  "version": "1.0.0",
+  "description": "Ung dung hoc tap thong minh Khoa hoc Tu nhien 7 - Bai 3: Nguyen to hoa hoc",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "echo 'Static build ready'"
+  },
+  "keywords": ["education", "chemistry", "khtn7", "edtech"],
+  "author": "Le Van Thang",
+  "license": "MIT"
+}
