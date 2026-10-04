@@ -2,8 +2,19 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>Khoa học Tự nhiên 7 - Bài 3: Nguyên tố hóa học</title>
+  
+  <!-- Cấu hình Web App & Mobile Icon (PWA) -->
+  <meta name="theme-color" content="#0284c7">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hóa Học 7">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+
   <link rel="stylesheet" href="css/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,20 +90,25 @@
         </div>
       </div>
 
-      <ul class="nav-links">
-        <li><button class="nav-btn active" data-tab="home">🏠 Tổng quan</button></li>
-        <li><button class="nav-btn" data-tab="elements">🧪 Bảng 3.1 (20 N.tố)</button></li>
-        <li><button class="nav-btn" data-tab="body">🧬 Cơ thể người</button></li>
-        <li><button class="nav-btn" data-tab="media">🎬 Bài giảng & PhET</button></li>
-        <li><button class="nav-btn" data-tab="practice">📝 Luyện tập & Tự luận</button></li>
-        <li><button class="nav-btn" data-tab="game">🏆 Ai là triệu phú</button></li>
+      <!-- Nút mở menu trên điện thoại -->
+      <button class="mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileNav()" aria-label="Mở menu">
+        ☰
+      </button>
+
+      <ul class="nav-links" id="mainNavLinks">
+        <li><button class="nav-btn active" data-tab="home" onclick="handleNavClick('home')">🏠 Tổng quan</button></li>
+        <li><button class="nav-btn" data-tab="elements" onclick="handleNavClick('elements')">🧪 Bảng 3.1</button></li>
+        <li><button class="nav-btn" data-tab="body" onclick="handleNavClick('body')">🧬 Cơ thể người</button></li>
+        <li><button class="nav-btn" data-tab="media" onclick="handleNavClick('media')">🎬 Bài giảng & PhET</button></li>
+        <li><button class="nav-btn" data-tab="practice" onclick="handleNavClick('practice')">📝 Luyện tập</button></li>
+        <li><button class="nav-btn" data-tab="game" onclick="handleNavClick('game')">🏆 Triệu phú</button></li>
         <!-- Tab Giáo viên chỉ hiện khi đăng nhập quyền Admin Giáo viên -->
         <li id="navTabTeacherItem" style="display: none;">
-          <button class="nav-btn" data-tab="teacher">📊 Bảng Quản trị (Admin)</button>
+          <button class="nav-btn" data-tab="teacher" onclick="handleNavClick('teacher')">📊 Quản trị (Admin)</button>
         </li>
       </ul>
 
-      <div class="user-badge">
+      <div class="user-badge" id="userBadgeHeader">
         <div class="user-tag" id="userDisplayBadge">
           👤 <strong>Học sinh</strong>
         </div>
@@ -457,5 +473,17 @@
 
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    // Đăng ký Service Worker hỗ trợ cài đặt App trên Điện thoại & Laptop (PWA)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').then((reg) => {
+          console.log('PWA ServiceWorker đã sẵn sàng:', reg.scope);
+        }).catch((err) => {
+          console.log('ServiceWorker đăng ký không thành công:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>

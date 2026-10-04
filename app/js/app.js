@@ -75,11 +75,27 @@ function switchTab(tabId) {
   document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.remove("active"));
 
   const targetSec = document.getElementById(`section-${tabId}`);
-  const targetBtn = document.querySelector(`.nav-btn[data-tab="${tabId}"]`);
+  const targetBtn = document.querySelectorAll(`.nav-btn[data-tab="${tabId}"]`);
   if (targetSec) targetSec.classList.add("active");
-  if (targetBtn) targetBtn.classList.add("active");
+  targetBtn.forEach(b => b.classList.add("active"));
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Bật/tắt thanh menu di động
+function toggleMobileNav() {
+  const navLinks = document.getElementById("mainNavLinks");
+  if (navLinks) {
+    navLinks.classList.toggle("mobile-open");
+  }
+}
+
+function handleNavClick(tabId) {
+  switchTab(tabId);
+  const navLinks = document.getElementById("mainNavLinks");
+  if (navLinks && navLinks.classList.contains("mobile-open")) {
+    navLinks.classList.remove("mobile-open");
+  }
 }
 
 // Kiểm tra phiên đăng nhập đã lưu trong sessionStorage

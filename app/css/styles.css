@@ -873,3 +873,211 @@ footer {
   margin-top: 3rem;
 }
 
+/* ==========================================================================
+   RESPONSIVE DESIGN CHO MỌI THIẾT BỊ (MOBILE, TABLET, LAPTOP)
+   ========================================================================== */
+
+.mobile-menu-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  font-size: 1.6rem;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-main);
+  line-height: 1;
+}
+
+/* Dành cho Màn hình Tablet & Laptop nhỏ (dưới 1024px) */
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 0.75rem 1rem;
+  }
+  
+  .brand img {
+    height: 52px;
+  }
+
+  .nav-btn {
+    padding: 6px 10px;
+    font-size: 0.82rem;
+  }
+
+  .grid-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Dành riêng cho Điện Thoại Di Động (Smartphone dưới 768px) */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.6rem 1rem;
+    position: relative;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .brand {
+    gap: 10px;
+  }
+
+  .brand img {
+    height: 48px;
+  }
+
+  .brand-text h1 {
+    font-size: 1rem;
+  }
+
+  .brand-text span {
+    font-size: 0.75rem;
+  }
+
+  .mobile-menu-toggle {
+    display: block;
+    margin-left: auto;
+  }
+
+  .user-badge {
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+    margin-top: 4px;
+  }
+
+  /* Menu xổ xuống dạng Dropdown mượt mà trên điện thoại */
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 8px;
+    margin-top: 8px;
+    border: 1px solid var(--border);
+    gap: 6px;
+  }
+
+  .nav-links.mobile-open {
+    display: flex;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .nav-btn {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    justify-content: flex-start;
+    border-radius: 6px;
+  }
+
+  /* Khung Hero trên di động */
+  .hero-card {
+    padding: 1.5rem 1.2rem;
+    border-radius: 10px;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+  }
+
+  .hero-desc {
+    font-size: 0.9rem;
+  }
+
+  .hero-btns {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-btns button {
+    width: 100%;
+  }
+
+  /* Danh sách thẻ tính năng */
+  .grid-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Bảng 3.1: 2 cột trên điện thoại để dễ lướt */
+  .elements-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .elem-card {
+    padding: 0.75rem;
+  }
+
+  .elem-symbol {
+    font-size: 1.8rem;
+  }
+
+  .elem-name {
+    font-size: 0.85rem;
+  }
+
+  .table-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .filter-chips {
+    overflow-x: auto;
+    padding-bottom: 6px;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Phần Media: video và thí nghiệm PhET xếp dọc */
+  #section-media > div {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Game triệu phú trên di động */
+  .game-screen {
+    padding: 1rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .game-q-box {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+
+  .game-options-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .game-ladder {
+    max-height: 180px;
+    overflow-y: auto;
+  }
+
+  /* Cổng đăng nhập trên điện thoại */
+  .login-card-container {
+    padding: 1.8rem 1.2rem;
+    border-radius: 14px;
+  }
+
+  .login-brand-logo {
+    height: 85px;
+  }
+
+  /* Bảng Giáo viên di động */
+  .teacher-table th, .teacher-table td {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+}
+
+
